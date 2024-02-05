@@ -36,6 +36,7 @@ const SendToken = ({ contract, signer, account }) => {
       setAmount('');
     }
   }, [txHash]);
+  const etherscanURL = txHash ? `https://sepolia.etherscan.io/tx/${txHash}` : null;
 
   return (
     <div className="max-w-md mx-auto p-4 bg-white rounded-md shadow-md my-8">
@@ -68,8 +69,10 @@ const SendToken = ({ contract, signer, account }) => {
       </button>
       {txHash && (
         <div className="mt-4">
-        <p className="font-bold">Transaction Hash:</p>
-        <p style={{ wordBreak: 'break-all' }}>{txHash}</p>
+        <p className="font-bold text-lg">Transaction Hash:</p>
+        <p style={{ wordBreak: 'break-all' }}><a href={etherscanURL} target="_blank" rel="noopener noreferrer" >
+        <strong>click here to see transaction</strong> </a>
+        </p>
       </div>
       )}
     </div>

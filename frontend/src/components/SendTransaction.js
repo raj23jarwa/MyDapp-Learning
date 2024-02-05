@@ -13,6 +13,7 @@ const SendTransaction = ({ signer, account }) => {
     const isValidInput = () => account && recipient && amount;
 
     const handleSendEther = async () => {
+        const etherscanURL = `https://sepolia.etherscan.io/tx/${txHash}`;
 
         if (!isValidInput()) {
             console.error('Invalid inputs.');
@@ -36,8 +37,9 @@ const SendTransaction = ({ signer, account }) => {
         }
         finally {
             setIsLoading(false);
-          }
+        }
     };
+    const etherscanURL = txHash ? `https://sepolia.etherscan.io/tx/${txHash}` : null;
 
     useEffect(() => {
         // Clear input values after txHash is updated
@@ -46,6 +48,7 @@ const SendTransaction = ({ signer, account }) => {
             setAmount('');
         }
     }, [txHash]);
+
 
     return (
         <div className="max-w-md mx-auto p-4 bg-white rounded-md shadow-md my-8">
@@ -79,8 +82,10 @@ const SendTransaction = ({ signer, account }) => {
             </button>
             {txHash && (
                 <div className="mt-4">
-                    <p className="font-bold">Transaction Hash:</p>
-                    <p style={{ wordBreak: 'break-all' }}>{txHash}</p>
+                    <p className="font-bold text-lg">Transaction Hash:</p>
+                    <p style={{ wordBreak: 'break-all' }}><a href={etherscanURL} target="_blank" rel="noopener noreferrer" >
+                        <strong>click here to see transaction</strong> </a>
+                    </p>
                 </div>
             )}
 

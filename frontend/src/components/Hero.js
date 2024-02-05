@@ -4,9 +4,14 @@ const Hero = ({ name, symbol, decimal, paused, owner, totalSupply, error, accoun
   const [queryAddress, setQueryAddress] = useState('');
   const [queryBalance, setQueryBalance] = useState(null);
   const [balance, setBalance] = useState(0);
+  const [buttonClicked, setButtonClicked] = useState(false);
+
 
   const handleCheckBalance = async () => {
+    setButtonClicked(!buttonClicked);
+
     if (account && contract) {
+
       try {
         const balance = await contract.balanceOf(account);
         setBalance(balance.toString());
@@ -68,9 +73,13 @@ const Hero = ({ name, symbol, decimal, paused, owner, totalSupply, error, accoun
           >
             Check Your Balance
           </button>
-          <p className="text-lg font-bold">
-            <strong>Your Balance:</strong> {balance/1000000000000000000} {symbol}
-          </p>
+          
+          {buttonClicked && (
+            <p className="text-lg font-bold">
+              <strong>Your Token Balance:</strong> {balance / 1000000000000000000} {symbol}
+            </p>
+          )}
+
           <label className="block mt-4 mb-2 font-bold text-lg">
             Query Token Balance (by address):
             <input

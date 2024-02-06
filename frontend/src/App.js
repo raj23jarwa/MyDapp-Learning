@@ -9,6 +9,7 @@ import { ethers } from 'ethers';
 import MyTokenABI from './artifacts/contracts/MyToken.sol/MyToken.json';
 import SendTransaction from './components/SendTransaction';
 import SendToken from './components/SendToken';
+import SendTokenWithTokenAddress from './components/SendTokenWithTokenAddress';
 function App() {
   const [contract, setContract] = useState(null);
   const [account, setAccount] = useState(null);
@@ -22,6 +23,7 @@ function App() {
   const [provider, setProvider] = useState(null);
   // const [txHash, setTxHash] = useState('');
   const [signer,setSigner]=useState('');
+ 
   
    // Show success toast
   //  toast.success('Transaction sent successfully!', {
@@ -36,11 +38,13 @@ function App() {
         // Connect to Ethereum provider (e.g., MetaMask)
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         setProvider(provider)
+
+
         // Check if MetaMask is installed
         if (!provider) {
           setError('MetaMask not detected. Please install MetaMask to use this feature.');
           console.log(error);
-          return;
+          
         }
 
         // Get signer (account)
@@ -113,7 +117,9 @@ function App() {
       />
       <div className='flex flex-row gap-5'>
       <SendTransaction provider={provider} signer={signer} account={account} setProvider={setProvider} setAccount={setAccount}  />
-      <SendToken provider={provider} signer={signer} account={account} setProvider={setProvider} setAccount={setAccount} contract={contract}  />
+      <SendToken provider={provider} signer={signer} account={account} setProvider={setProvider} setAccount={setAccount} contract={contract} />
+      <SendTokenWithTokenAddress provider={provider} signer={signer} account={account} setProvider={setProvider} setAccount={setAccount} contract={contract} />
+
       </div>
     </div>
   );

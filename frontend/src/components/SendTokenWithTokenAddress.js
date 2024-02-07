@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
-const SendTokenWithTokenAddress = ({ signer, account }) => {
+const SendTokenWithTokenAddress = ({ signer, account,contract }) => {
     const [recipient, setRecipient] = useState('');
     const [tokenAddress, setTokenAddress] = useState('');
     const [amount, setAmount] = useState('');
     const [txHash, setTxHash] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [tokenBalance, setTokenBalance] = useState(0);
+    const [balance, setBalance] = useState(0);
+    const [errorMsg, setErrorMsg] = useState('');
+    const [tokenContract, setTokenContract] = useState(null);
+
 
     const isValidInput = () => account && recipient && tokenAddress && amount;
+    
+
 
     const handleSendTokens = async () => {
         if (!isValidInput() || isLoading) {
@@ -21,7 +28,7 @@ const SendTokenWithTokenAddress = ({ signer, account }) => {
         try {
             // Connect to the ERC-20 token contract using the provided token address
             const tokenContract = new ethers.Contract(tokenAddress, ['function transfer(address to, uint256 amount)'], signer);
-
+    
             // Call the transfer function of the token contract to send tokens
             const tx = await tokenContract.transfer(recipient, ethers.utils.parseUnits(amount, 18));
             const receipt = await tx.wait();
@@ -41,6 +48,30 @@ const SendTokenWithTokenAddress = ({ signer, account }) => {
             setAmount('');
         }
     }, [txHash]);
+
+        useEffect(() => {
+            const fetchTokenBalance = async () => {
+                try {
+                    if (!tokenAddress || !account) return;
+        
+                    // Create an instance of the ERC-20 token contract using the token address
+                    const tokenContract = new ethers.Contract(tokenAddress, ['function balanceOf(address) returns (uint256)'], signer);
+        
+                    // Call the balanceOf function of the token contract to fetch the balance
+                    const balance = await tokenContract.balanceOf(account);
+        
+                    // Set the balance state with the fetched balance
+                    setTokenBalance(balance.toString());
+                } catch (error) {
+                    console.error('Error fetching token balance:', error);
+                }
+            };
+        
+            // Call the fetchTokenBalance function when the token address or account changes
+            fetchTokenBalance();
+        }, [tokenAddress, account, signer]);
+        
+    
 
     const etherscanURL = txHash ? `https://sepolia.etherscan.io/tx/${txHash}` : null;
 
@@ -75,6 +106,12 @@ const SendTokenWithTokenAddress = ({ signer, account }) => {
                     onChange={(e) => setAmount(e.target.value)}
                 />
             </label>
+            {parseInt(amount) < parseInt(balance) && (
+                <p className="text-red-500 mb-4">You are trying to send more tokens than your balance</p>
+            )}
+            {errorMsg && (
+                <p className="text-red-500 mb-4">{errorMsg}</p>
+            )}
             <button
                 onClick={handleSendTokens}
                 className={`bg-green-500 text-white rounded-md px-4 py-2 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}

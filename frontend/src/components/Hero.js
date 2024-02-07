@@ -71,7 +71,7 @@ const Hero = ({ name, symbol, decimal, paused, owner, totalSupply, error, accoun
             onClick={handleCheckBalance}
             className="bg-blue-500 text-white rounded-md px-4 py-2 ml-2"
           >
-            Check Your Balance
+            Check My Balance
           </button>
           
           {buttonClicked && (
